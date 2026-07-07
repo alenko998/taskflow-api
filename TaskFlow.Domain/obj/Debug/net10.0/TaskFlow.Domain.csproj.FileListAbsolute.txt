@@ -9,3 +9,5 @@
 /Users/macbookair/taskflow-api/TaskFlow.Domain/obj/Debug/net10.0/refint/TaskFlow.Domain.dll
 /Users/macbookair/taskflow-api/TaskFlow.Domain/obj/Debug/net10.0/TaskFlow.Domain.pdb
 /Users/macbookair/taskflow-api/TaskFlow.Domain/obj/Debug/net10.0/ref/TaskFlow.Domain.dll
+/Users/macbookair/taskflow-api/TaskFlow.Domain/obj/Debug/net10.0/TaskFlow.Domain.csproj.AssemblyReference.cache
+/Users/macbookair/taskflow-api/TaskFlow.Domain/obj/Debug/net10.0/TaskFlow.Domain.sourcelink.json

@@ -10,3 +10,9 @@
 /Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/TaskFlow.Infrastructure.pdb
 /Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/ref/TaskFlow.Infrastructure.dll
 /Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/TaskFlow.Infrastructure.sourcelink.json
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/bin/Debug/net10.0/TaskFlow.Application.dll
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/bin/Debug/net10.0/TaskFlow.Domain.dll
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/bin/Debug/net10.0/TaskFlow.Domain.pdb
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/bin/Debug/net10.0/TaskFlow.Application.pdb
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/TaskFlow.Infrastructure.csproj.AssemblyReference.cache
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/TaskFlow.635E8F59.Up2Date

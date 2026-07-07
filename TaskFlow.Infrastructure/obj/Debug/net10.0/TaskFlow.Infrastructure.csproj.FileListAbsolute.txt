@@ -1,0 +1,11 @@
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/bin/Debug/net10.0/TaskFlow.Infrastructure.deps.json
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/bin/Debug/net10.0/TaskFlow.Infrastructure.dll
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/bin/Debug/net10.0/TaskFlow.Infrastructure.pdb
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/TaskFlow.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/TaskFlow.Infrastructure.AssemblyInfoInputs.cache
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/TaskFlow.Infrastructure.AssemblyInfo.cs
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/TaskFlow.Infrastructure.csproj.CoreCompileInputs.cache
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/TaskFlow.Infrastructure.dll
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/refint/TaskFlow.Infrastructure.dll
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/TaskFlow.Infrastructure.pdb
+/Users/macbookair/taskflow-api/TaskFlow.Infrastructure/obj/Debug/net10.0/ref/TaskFlow.Infrastructure.dll

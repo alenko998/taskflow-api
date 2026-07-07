@@ -12,8 +12,8 @@ public record CreateProjectCommand(
     string       Description,
     TaskPriority Priority,
     DateTime?    Deadline,
-    string       WorkspaceId,
-    string       CreatedById
+    string       WorkspaceId = "",
+    string       CreatedById = ""
 ) : IRequest<Result<Guid>>;
 
 public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, Result<Guid>>

@@ -13,8 +13,8 @@ public record CreateTaskCommand(
     TaskPriority Priority,
     DateTime?    DueDate,
     string       ProjectId,
-    string       CreatedById,
-    string?      AssigneeId
+    string       CreatedById = "",
+    string?      AssigneeId  = null
 ) : IRequest<Result<Guid>>;
 
 public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Result<Guid>>
@@ -43,7 +43,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Resul
             request.Title,
             request.Description,
             request.Priority,
-            request.DueDate,
+            request.DueDate.HasValue ? DateTime.SpecifyKind(request.DueDate.Value, DateTimeKind.Utc) : null,
             projectId,
             request.CreatedById,
             request.AssigneeId

@@ -14,9 +14,9 @@ public class Project : BaseEntity
     public Guid          WorkspaceId { get; private set; }
     public string        CreatedById { get; private set; } = string.Empty;
 
-    public Workspace             Workspace { get; private set; } = null!;
-    public User                  CreatedBy { get; private set; } = null!;
-    public ICollection<TaskItem> Tasks     { get; private set; } = new List<TaskItem>();
+    public Workspace              Workspace { get; private set; } = null!;
+    public User                   CreatedBy { get; private set; } = null!;
+    public ICollection<TaskItem>  Tasks     { get; private set; } = new List<TaskItem>();
     public ICollection<ProjectMember> Members { get; private set; } = new List<ProjectMember>();
 
     private Project() { }
@@ -28,7 +28,7 @@ public class Project : BaseEntity
             Name        = name,
             Description = description,
             Priority    = priority,
-            Deadline    = deadline,
+            Deadline    = deadline.HasValue ? DateTime.SpecifyKind(deadline.Value, DateTimeKind.Utc) : null,
             WorkspaceId = workspaceId,
             CreatedById = createdById,
         };
@@ -41,7 +41,7 @@ public class Project : BaseEntity
         Name        = name;
         Description = description;
         Priority    = priority;
-        Deadline    = deadline;
+        Deadline    = deadline.HasValue ? DateTime.SpecifyKind(deadline.Value, DateTimeKind.Utc) : null;
         Status      = status;
         SetUpdatedAt();
     }

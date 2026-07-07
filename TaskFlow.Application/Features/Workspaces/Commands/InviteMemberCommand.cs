@@ -7,7 +7,12 @@ using TaskFlow.Domain.Enums;
 
 namespace TaskFlow.Application.Features.Workspaces.Commands;
 
-public record InviteMemberCommand(string WorkspaceId, string Email, WorkspaceRole Role, string InvitedById) : IRequest<Result>;
+public record InviteMemberCommand(
+    string        Email,
+    WorkspaceRole Role,
+    string        WorkspaceId = "",
+    string        InvitedById = ""
+) : IRequest<Result>;
 
 public class InviteMemberCommandHandler : IRequestHandler<InviteMemberCommand, Result>
 {

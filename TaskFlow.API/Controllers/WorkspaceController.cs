@@ -32,7 +32,8 @@ public class WorkspaceController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdateWorkspaceDto dto)
     {
-        var result = await _mediator.Send(new UpdateWorkspaceCommand(_currentUser.WorkspaceId!, dto.Name, _currentUser.UserId!));
+        var result = await _mediator.Send(new UpdateWorkspaceCommand(
+            _currentUser.WorkspaceId!, dto.Name, _currentUser.UserId!));
         return result.ToActionResult();
     }
 
@@ -46,7 +47,11 @@ public class WorkspaceController : ControllerBase
     [HttpPost("invite")]
     public async Task<IActionResult> Invite([FromBody] InviteMemberCommand command)
     {
-        var result = await _mediator.Send(command with { InvitedById = _currentUser.UserId! });
+        var result = await _mediator.Send(command with
+        {
+            WorkspaceId = _currentUser.WorkspaceId!,
+            InvitedById = _currentUser.UserId!
+        });
         return result.ToActionResult();
     }
 
@@ -60,14 +65,16 @@ public class WorkspaceController : ControllerBase
     [HttpPut("members/{userId}/role")]
     public async Task<IActionResult> UpdateMemberRole(string userId, [FromBody] UpdateMemberRoleDto dto)
     {
-        var result = await _mediator.Send(new UpdateMemberRoleCommand(_currentUser.WorkspaceId!, userId, dto.Role, _currentUser.UserId!));
+        var result = await _mediator.Send(new UpdateMemberRoleCommand(
+            _currentUser.WorkspaceId!, userId, dto.Role, _currentUser.UserId!));
         return result.ToActionResult();
     }
 
     [HttpDelete("members/{userId}")]
     public async Task<IActionResult> RemoveMember(string userId)
     {
-        var result = await _mediator.Send(new RemoveMemberCommand(_currentUser.WorkspaceId!, userId, _currentUser.UserId!));
+        var result = await _mediator.Send(new RemoveMemberCommand(
+            _currentUser.WorkspaceId!, userId, _currentUser.UserId!));
         return result.ToActionResult();
     }
 }

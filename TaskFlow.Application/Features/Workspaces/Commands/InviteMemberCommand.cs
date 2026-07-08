@@ -16,21 +16,27 @@ public record InviteMemberCommand(
 
 public class InviteMemberCommandHandler : IRequestHandler<InviteMemberCommand, Result>
 {
-    private readonly IAppDbContext _context;
-    private readonly IEmailService _emailService;
-    private readonly IUnitOfWork   _unitOfWork;
+    private readonly IAppDbContext       _context;
+    private readonly IEmailService       _emailService;
+    private readonly IUnitOfWork         _unitOfWork;
+    private readonly ICurrentUserService _currentUser;
 
-    public InviteMemberCommandHandler(IAppDbContext context, IEmailService emailService, IUnitOfWork unitOfWork)
+    public InviteMemberCommandHandler(IAppDbContext context, IEmailService emailService, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
     {
         _context      = context;
         _emailService = emailService;
         _unitOfWork   = unitOfWork;
+        _currentUser  = currentUser;
     }
 
     public async Task<Result> Handle(InviteMemberCommand request, CancellationToken cancellationToken)
     {
         if (!Guid.TryParse(request.WorkspaceId, out var workspaceId))
             return Result.Failure("Invalid workspace ID.");
+
+        var role = _currentUser.Role;
+        if (role != "Owner" && role != "Admin")
+            return Result.Forbidden("Only owners and admins can invite members.");
 
         var workspace = await _context.Workspaces
             .Include(w => w.Members)

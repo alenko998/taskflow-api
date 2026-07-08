@@ -10,13 +10,15 @@ public record UpdateMemberRoleCommand(string WorkspaceId, string TargetUserId, W
 
 public class UpdateMemberRoleCommandHandler : IRequestHandler<UpdateMemberRoleCommand, Result>
 {
-    private readonly IAppDbContext _context;
-    private readonly IUnitOfWork   _unitOfWork;
+    private readonly IAppDbContext       _context;
+    private readonly IUnitOfWork         _unitOfWork;
+    private readonly ICurrentUserService _currentUser;
 
-    public UpdateMemberRoleCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork)
+    public UpdateMemberRoleCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
     {
-        _context    = context;
-        _unitOfWork = unitOfWork;
+        _context     = context;
+        _unitOfWork  = unitOfWork;
+        _currentUser = currentUser;
     }
 
     public async Task<Result> Handle(UpdateMemberRoleCommand request, CancellationToken cancellationToken)
@@ -24,12 +26,13 @@ public class UpdateMemberRoleCommandHandler : IRequestHandler<UpdateMemberRoleCo
         if (!Guid.TryParse(request.WorkspaceId, out var workspaceId))
             return Result.Failure("Invalid workspace ID.");
 
+        // Samo Owner može mijenjati role
+        if (_currentUser.Role != "Owner")
+            return Result.Forbidden("Only the owner can change member roles.");
+
         var workspace = await _context.Workspaces.FirstOrDefaultAsync(w => w.Id == workspaceId, cancellationToken);
         if (workspace == null)
             return Result.NotFound("Workspace not found.");
-
-        if (workspace.OwnerId != request.RequestedById)
-            return Result.Forbidden("Only the owner can change member roles.");
 
         if (request.TargetUserId == workspace.OwnerId)
             return Result.Forbidden("Cannot change the owner's role.");

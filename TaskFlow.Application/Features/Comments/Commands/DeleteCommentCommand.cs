@@ -9,13 +9,15 @@ public record DeleteCommentCommand(string CommentId, string UserId) : IRequest<R
 
 public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand, Result>
 {
-    private readonly IAppDbContext _context;
-    private readonly IUnitOfWork   _unitOfWork;
+    private readonly IAppDbContext       _context;
+    private readonly IUnitOfWork         _unitOfWork;
+    private readonly ICurrentUserService _currentUser;
 
-    public DeleteCommentCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork)
+    public DeleteCommentCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
     {
-        _context    = context;
-        _unitOfWork = unitOfWork;
+        _context     = context;
+        _unitOfWork  = unitOfWork;
+        _currentUser = currentUser;
     }
 
     public async Task<Result> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
@@ -27,7 +29,10 @@ public class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentCommand,
         if (comment == null)
             return Result.NotFound("Comment not found.");
 
-        if (comment.AuthorId != request.UserId)
+        var role   = _currentUser.Role;
+        var userId = _currentUser.UserId;
+
+        if (role != "Owner" && role != "Admin" && comment.AuthorId != userId)
             return Result.Forbidden("You can only delete your own comments.");
 
         _context.Comments.Remove(comment);

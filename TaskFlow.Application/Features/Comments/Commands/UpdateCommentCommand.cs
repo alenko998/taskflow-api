@@ -9,13 +9,15 @@ public record UpdateCommentCommand(string CommentId, string Content, string User
 
 public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand, Result>
 {
-    private readonly IAppDbContext _context;
-    private readonly IUnitOfWork   _unitOfWork;
+    private readonly IAppDbContext       _context;
+    private readonly IUnitOfWork         _unitOfWork;
+    private readonly ICurrentUserService _currentUser;
 
-    public UpdateCommentCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork)
+    public UpdateCommentCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
     {
-        _context    = context;
-        _unitOfWork = unitOfWork;
+        _context     = context;
+        _unitOfWork  = unitOfWork;
+        _currentUser = currentUser;
     }
 
     public async Task<Result> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
@@ -27,7 +29,7 @@ public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand,
         if (comment == null)
             return Result.NotFound("Comment not found.");
 
-        if (comment.AuthorId != request.UserId)
+        if (comment.AuthorId != _currentUser.UserId)
             return Result.Forbidden("You can only edit your own comments.");
 
         comment.Update(request.Content);

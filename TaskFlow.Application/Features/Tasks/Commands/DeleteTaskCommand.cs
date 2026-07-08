@@ -9,13 +9,15 @@ public record DeleteTaskCommand(string TaskId, string UserId) : IRequest<Result>
 
 public class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand, Result>
 {
-    private readonly IAppDbContext _context;
-    private readonly IUnitOfWork   _unitOfWork;
+    private readonly IAppDbContext       _context;
+    private readonly IUnitOfWork         _unitOfWork;
+    private readonly ICurrentUserService _currentUser;
 
-    public DeleteTaskCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork)
+    public DeleteTaskCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
     {
-        _context    = context;
-        _unitOfWork = unitOfWork;
+        _context     = context;
+        _unitOfWork  = unitOfWork;
+        _currentUser = currentUser;
     }
 
     public async Task<Result> Handle(DeleteTaskCommand request, CancellationToken cancellationToken)
@@ -27,8 +29,12 @@ public class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand, Resul
         if (task == null)
             return Result.NotFound("Task not found.");
 
-        if (task.CreatedById != request.UserId)
-            return Result.Forbidden("Only the task creator can delete it.");
+        var role   = _currentUser.Role;
+        var userId = _currentUser.UserId;
+
+        // Owner/Admin mogu brisati sve taskove, Member samo svoje
+        if (role != "Owner" && role != "Admin" && task.CreatedById != userId)
+            return Result.Forbidden("You can only delete your own tasks.");
 
         _context.Tasks.Remove(task);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

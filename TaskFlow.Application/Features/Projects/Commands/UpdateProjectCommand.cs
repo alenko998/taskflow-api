@@ -18,13 +18,15 @@ public record UpdateProjectCommand(
 
 public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, Result>
 {
-    private readonly IAppDbContext _context;
-    private readonly IUnitOfWork   _unitOfWork;
+    private readonly IAppDbContext       _context;
+    private readonly IUnitOfWork         _unitOfWork;
+    private readonly ICurrentUserService _currentUser;
 
-    public UpdateProjectCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork)
+    public UpdateProjectCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
     {
-        _context    = context;
-        _unitOfWork = unitOfWork;
+        _context     = context;
+        _unitOfWork  = unitOfWork;
+        _currentUser = currentUser;
     }
 
     public async Task<Result> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
@@ -32,12 +34,13 @@ public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand,
         if (!Guid.TryParse(request.ProjectId, out var projectId))
             return Result.Failure("Invalid project ID.");
 
+        var role = _currentUser.Role;
+        if (role != "Owner" && role != "Admin")
+            return Result.Forbidden("Only owners and admins can update projects.");
+
         var project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId, cancellationToken);
         if (project == null)
             return Result.NotFound("Project not found.");
-
-        if (project.CreatedById != request.UserId)
-            return Result.Forbidden("Only the project creator can update it.");
 
         project.Update(request.Name, request.Description, request.Priority, request.Deadline, request.Status);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

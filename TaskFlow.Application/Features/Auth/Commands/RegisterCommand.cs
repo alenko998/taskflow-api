@@ -2,7 +2,6 @@ using MediatR;
 using TaskFlow.Application.Common.Interfaces;
 using TaskFlow.Application.Common.Models;
 using TaskFlow.Domain.Entities;
-using TaskFlow.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace TaskFlow.Application.Features.Auth.Commands;
@@ -12,23 +11,18 @@ public record RegisterCommand(
     string LastName,
     string Email,
     string Password,
-    string ConfirmPassword,
-    string WorkspaceName
+    string ConfirmPassword
 ) : IRequest<Result<string>>;
 
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<string>>
 {
     private readonly UserManager<User> _userManager;
-    private readonly IAppDbContext     _context;
     private readonly IEmailService     _emailService;
-    private readonly IUnitOfWork       _unitOfWork;
 
-    public RegisterCommandHandler(UserManager<User> userManager, IAppDbContext context, IEmailService emailService, IUnitOfWork unitOfWork)
+    public RegisterCommandHandler(UserManager<User> userManager, IEmailService emailService)
     {
         _userManager  = userManager;
-        _context      = context;
         _emailService = emailService;
-        _unitOfWork   = unitOfWork;
     }
 
     public async Task<Result<string>> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -45,14 +39,6 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<st
         var result = await _userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)
             return Result<string>.Failure(result.Errors.First().Description);
-
-        var workspace = Workspace.Create(request.WorkspaceName, user.Id);
-        _context.Workspaces.Add(workspace);
-
-        var member = WorkspaceMember.Create(workspace.Id, user.Id, WorkspaceRole.Owner);
-        _context.WorkspaceMembers.Add(member);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         await _emailService.SendEmailVerificationAsync(user.Email!, user.FirstName, user.Id, token);

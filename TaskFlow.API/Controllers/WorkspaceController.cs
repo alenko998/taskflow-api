@@ -77,8 +77,31 @@ public class WorkspaceController : ControllerBase
             _currentUser.WorkspaceId!, userId, _currentUser.UserId!));
         return result.ToActionResult();
     }
+
+    [HttpGet("my")]
+    public async Task<IActionResult> GetMyWorkspaces()
+    {
+        var result = await _mediator.Send(new GetUserWorkspacesQuery(_currentUser.UserId!));
+        return result.ToActionResult();
+    }
+
+    [HttpPost("switch")]
+    public async Task<IActionResult> Switch([FromBody] SwitchWorkspaceDto dto)
+    {
+        var result = await _mediator.Send(new SwitchWorkspaceCommand(_currentUser.UserId!, dto.WorkspaceId));
+        return result.ToActionResult();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateWorkspaceCommand command)
+    {
+        var result = await _mediator.Send(command with { UserId = _currentUser.UserId! });
+        return result.ToActionResult();
+    }
 }
 
 public record UpdateWorkspaceDto(string Name);
+
+public record SwitchWorkspaceDto(string WorkspaceId);
 public record AcceptInvitationDto(string Token);
 public record UpdateMemberRoleDto(TaskFlow.Domain.Enums.WorkspaceRole Role);

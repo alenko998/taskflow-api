@@ -19,19 +19,26 @@ public record CreateTaskCommand(
 
 public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Result<Guid>>
 {
-    private readonly IAppDbContext _context;
-    private readonly IUnitOfWork   _unitOfWork;
-    private readonly IEmailService _emailService;
+    private readonly IAppDbContext       _context;
+    private readonly IUnitOfWork         _unitOfWork;
+    private readonly IEmailService       _emailService;
+    private readonly ICurrentUserService _currentUser;
 
-    public CreateTaskCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork, IEmailService emailService)
+    public CreateTaskCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork, IEmailService emailService, ICurrentUserService currentUser)
     {
         _context      = context;
         _unitOfWork   = unitOfWork;
         _emailService = emailService;
+        _currentUser  = currentUser;
     }
 
     public async Task<Result<Guid>> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
     {
+        // Samo Owner i Admin mogu kreirati taskove
+        var role = _currentUser.Role;
+        if (role != "Owner" && role != "Admin")
+            return Result<Guid>.Forbidden("Only owners and admins can create tasks.");
+
         if (!Guid.TryParse(request.ProjectId, out var projectId))
             return Result<Guid>.Failure("Invalid project ID.");
 
